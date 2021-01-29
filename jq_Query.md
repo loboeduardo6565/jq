@@ -40,8 +40,9 @@
 
 ###### Muestra las modificaciones del mismo día horas previas. 
 
+```
 [.apps[] | {id,versionInfo}] | sort_by(.lastConfigChangeAt) | (now | gmtime | strftime("%Y-%m-%dT%H:%M:%S.%Z") | strptime("%FT%T.%Z") [0:6] ) as $f | map(select((.versionInfo.lastConfigChangeAt | strptime("%FT%T.%Z")[0] == $f[0]) and (.versionInfo.lastConfigChangeAt | strptime("%FT%T.%Z")[1] == $f[1]) and (.versionInfo.lastConfigChangeAt | strptime("%FT%T.%Z")[2] == $f[2]) and (.versionInfo.lastConfigChangeAt | strptime("%FT%T.%Z")[3] <= $f[3]) ))
-
+```
 
 ###### BONUS: Encontrar aquellas aplicaciones que contengan los mismos containerPort definidos y armar un reporte.
 
