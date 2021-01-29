@@ -6,7 +6,7 @@
 ##### Se pide:
 ##### Obtener todas las aplicaciones que hayan cambiado su configuración en las ultimas 24 horas.
 
-###### El siguiente comando convierte la fecha actual en un arreglo para poder comparar cada posición con las fechas dentro del documento, en este sentido solo hubo que restar un 1 a la posición [2] correspondiente al día para observar los cambios en las ultimas 24 horas también mantiene el orden por fechas en caso de que existan varios hallazgos.
+###### El siguiente filtro convierte la fecha actual en un arreglo para poder comparar cada posición con las fechas dentro del documento, en este sentido solo hubo que restar un 1 a la posición [2] correspondiente al día para observar los cambios en las ultimas 24 horas también mantiene el orden por fechas en caso de que existan varios hallazgos.
 
 ```
 [.apps[] | {id,versionInfo}] | sort_by(.lastConfigChangeAt) | (now | gmtime | strftime("%Y-%m-%dT%H:%M:%S.%Z") | strptime("%FT%T.%Z") [0:6] ) as $f | map(select((.versionInfo.lastConfigChangeAt | strptime("%FT%T.%Z")[0] == $f[0]) and (.versionInfo.lastConfigChangeAt | strptime("%FT%T.%Z")[1] == $f[1]) and (.versionInfo.lastConfigChangeAt | strptime("%FT%T.%Z")[2] == $f[2] -1) ))
@@ -18,6 +18,8 @@
 	.apps[] | .id, .versionInfo.lastConfigChangeAt
 	.apps[] | {"Nombre de la Aplicación": .id, "Fecha de Modificación": .versionInfo.lastConfigChangeAt}
 ```
+![query_out](https://github.com/loboeduardo6565/jq/blob/main/3-jq%20play.png)
+
 ######	Si dos filtros están separados por una coma, entonces la misma entrada se alimentará en ambos y los flujos de valor de salida de los dos filtros se concatenarán en orden: primero, todas las salidas producidas por la expresión de la izquierda y luego todas las salidas producido por la derecha. Por ejemplo, filter .foo, .bar, produce tanto los campos "foo" como los campos "bar" como salidas independientes.
 ###### https://stedolan.github.io/jq/manual/
 
@@ -27,7 +29,7 @@
 ```
 	[.apps[] | {id,versionInfo}] | sort_by(.lastConfigChangeAt) | .[] | .id,.versionInfo.lastConfigChangeAt
 ```
-###### Muestra el listado ordenado manteniendo el formato json
+###### Muestra el mismo listado ordenado manteniendo el formato json
 ```
 	[.apps[] | {id,versionInfo}] | sort_by(.lastConfigChangeAt) | .[] | {"Nombre de la Aplicación": .id, "Fecha de Modificación": .versionInfo.lastConfigChangeAt}
 ```
